@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+</head>
+<body>
+    <div id="box">
+        <p>{{text}}</p>
+        <input type="text" v-model="text"/>
+        <ul>
+            <li v-for="a in arr" @click="show($event)">{{a.text}}{{a.id}}</li>
+        </ul>
+    </div>
+    <script src="vue.js"></script>
+    <script type="text/javascript">
+        new Vue({
+            el:"#box",
+            data:{
+                text:"hello world",
+                name:"philly",
+                arr:[
+                    {
+                        id:3,
+                        text:"我是第3个"
+                    },
+                    {
+                        id:1,
+                        text:"我是第1个"
+                    },
+                    {
+                        id:2,
+                        text:"我是第2个"
+                    }
+                ]
+            },
+            methods:{
+                show:function(e){
+                    console.log(e.target);
+                }
+            }
+        })
+    </script>
+</body>
+</html>

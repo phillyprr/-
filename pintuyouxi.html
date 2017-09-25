@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style type="text/css">
+        *{padding:0;margin:0;}
+        body{width:100%;height:100%;}
+        ul,li{list-style:none;}
+        #box{margin:0 auto;width:600px;height:650px;}
+        #box ul{width:600px;height:600px;
+        }
+        #box li{
+            float: left;
+            background: #f90;
+            text-align: center;
+            border: 1px solid #ccc;
+            box-shadow: 1px 1px 4px;
+            text-shadow: 1px 1px 1px #B9B4B4;
+            cursor: pointer;
+            box-sizing:border-box;
+        }
+        #box li.easy{
+            width:200px;height:200px;line-height:200px;font-size:40px;
+        }
+        #box li.med{
+            width:120px;height:120px;line-height:120px;font-size:28px;
+        }
+        #box li.kunnan{
+            width:100px;height:100px;line-height:100px;font-size:20px;
+        }
+        #box li.empty{
+            background: #ccc;
+            box-shadow: inset 2px 2px 18px;
+        }
+        #box select{width:100px;height:20px;}
+        #box .stepbox{float:right;color:red;}
+
+    </style>
+</head>
+<body>
+    <div id="box">
+        <select v-model="diff">
+            <option value="1">简单</option>
+            <option value="2">中等</option>
+            <option value="3">困难</option>
+        </select>
+        <button @click="init">重置游戏</button>
+        <span class="stepbox">你走了{{step}}步</span>
+        <ul>
+            <li v-for="(value,index) in arr" :class="[{easy:diff==1,med:diff==2,kunnan:diff==3},{empty:!value}]" @click="move(index)">{{value}}</li>
+        </ul>        
+    </div>
+    <script src="vue.js"></script>
+    <script type="text/javascript">
+        var app=new Vue({
+            el:"#box",
+            data:{
+                arr:[],
+                diff:1,
+                step:0,
+                gap:3
+            },
+            methods:{
+                init:function(){
+                    if(this.diff==1){
+                        this.setli(8);
+                        this.gap=3;
+                    }else if(this.diff==2){
+                        this.setli(24);
+                        this.gap=5;
+                    }else if(this.diff==3){
+                        this.setli(35);
+                        this.gap=6;
+                    }
+                },
+                setli:function(max){
+                    this.arr=[];
+                    this.step=0;
+                    for(var i=1;i<=max;i++){
+                        this.arr.push(i);
+                    }
+                    this.arr.sort(function(){
+                        return Math.random()-0.5;
+                    });
+                    this.arr.push('');
+                    console.log(this.arr);
+                },
+                move:function(idx){                    
+                    var gapN = this.gap;
+                    var curNum = this.arr[idx];
+                    var topNum = this.arr[idx-gapN];
+                    var buttonNum = this.arr[idx+gapN];
+                    var leftNum = this.arr[idx-1];
+                    var rightNum = this.arr[idx+1];
+
+                    // 和为空的位置交换数值
+                    if (leftNum === '' && idx%gapN!=0) {
+                        this.$set(this.arr,idx - 1, curNum);
+                        this.$set(this.arr,idx, '');
+                        this.step++;
+                    }else if(rightNum === '' && idx%gapN!=(gapN-1)){
+                        this.$set(this.arr,idx + 1, curNum);
+                        this.$set(this.arr,idx, '');
+                        this.step++;
+                    }else if(topNum===''){
+                        this.$set(this.arr,idx-gapN, curNum);
+                        this.$set(this.arr,idx, '');
+                        this.step++;
+                    }else if(buttonNum===''){
+                        this.$set(this.arr,idx+gapN, curNum);
+                        this.$set(this.arr,idx, '');
+                        this.step++;
+                    }
+                    this.contrast();
+                },
+                contrast:function(){
+                    var ansarr = this.arr.slice(0,-1);
+                    console.log(ansarr);
+                    var ans = ansarr.every(function(item,idx){
+                        return item===idx+1;
+                    })
+                    console.log(ans);
+                    if(ans){
+                        alert('"哇塞,你花了'+this.step+'步完成"');
+                    }
+                }
+            },
+            watch:{
+                diff:function(){
+                    console.log(this.diff);
+                    this.init();
+                }
+            }
+        });
+        app.init();
+    </script>
+</body>
+</html>
